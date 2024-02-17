@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
-      - run: cd starter/frontend && nvm use && npm ci && npm test
+      - run: cd starter/frontend && npm ci && npm test
 
   build:
     needs: [lint, test]
