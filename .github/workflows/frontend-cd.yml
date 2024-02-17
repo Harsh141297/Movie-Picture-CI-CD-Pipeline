@@ -24,14 +24,6 @@ jobs:
         npm install
         npm run build
 
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v2
-      with:
-        context: ./starter/frontend
-        file: ./starter/frontend/Dockerfile
-        push: true
-        tags: 356698323071.dkr.ecr.us-east-1.amazonaws.com/movie-picture-frontend:${{ github.sha }}
-
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -41,6 +33,14 @@ jobs:
 
     - name: Login to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: ./starter/frontend
+        file: ./starter/frontend/Dockerfile
+        push: true
+        tags: 356698323071.dkr.ecr.us-east-1.amazonaws.com/movie-picture-frontend:${{ github.sha }}
 
     - name: Setup Kustomize and Kubernetes
       uses: imranismail/setup-kustomize@v1
