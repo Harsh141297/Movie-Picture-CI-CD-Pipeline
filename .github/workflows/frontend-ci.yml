@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'frontend/**'
+      - 'starter/frontend/**'
   workflow_dispatch:
 
 jobs:
@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
-      - run: cd frontend && npm install && npm run lint
+      - run: cd starter/frontend && npm install && npm run lint
 
   test:
     runs-on: ubuntu-latest
@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
-      - run: cd frontend && nvm use && npm ci && npm test
+      - run: cd starter/frontend && nvm use && npm ci && npm test
 
   build:
     needs: [lint, test]
@@ -35,5 +35,5 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
-      - run: cd frontend && npm install && npm run build
+      - run: cd starter/frontend && npm install && npm run build
 

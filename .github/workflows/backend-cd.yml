@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
-    - 'backend/**'
+    - 'starter/backend/**'
   workflow_dispatch:
 
 jobs:
@@ -22,12 +22,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pipenv
-        cd backend
+        cd starter/backend
         pipenv install --dev
 
     - name: Build Docker image
       run: |
-        cd backend
+        cd starter/backend
         docker build --tag 356698323071.dkr.ecr.us-east-1.amazonaws.com/movie-picture-backend:${{ github.sha }} .
 
     - name: Configure AWS credentials
@@ -50,6 +50,6 @@ jobs:
     - name: Deploy to Kubernetes
       run: |
         aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name <EKS_CLUSTER_NAME>
-        cd backend/k8s
+        cd starter/backend/k8s
         kustomize edit set image backend=356698323071.dkr.ecr.us-east-1.amazonaws.com/movie-picture-frontend:${{ github.sha }}
         kustomize build | kubectl apply -f -
