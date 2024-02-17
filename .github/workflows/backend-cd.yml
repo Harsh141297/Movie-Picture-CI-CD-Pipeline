@@ -54,8 +54,8 @@ jobs:
         cd starter/backend
         docker build --tag 356698323071.dkr.ecr.us-east-1.amazonaws.com/movie-picture-backend:${{ github.sha }} .
 
-    - name: Login to Amazon ECR
-      uses: aws-actions/amazon-ecr-login@v1
+   - name: Login to Amazon ECR
+      run: aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin 356698323071.dkr.ecr.us-east-1.amazonaws.com
 
     - name: Push Docker image to ECR
       run: |
