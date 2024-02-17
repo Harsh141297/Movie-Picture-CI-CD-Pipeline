@@ -42,14 +42,14 @@ jobs:
 
     - name: Push Docker image to ECR
       run: |
-        docker push <ECR_REPO_URL>:${{ github.sha }}
+        docker push 356698323071.dkr.ecr.us-east-1.amazonaws.com/movie-picture-backend:${{ github.sha }}
 
     - name: Setup Kustomize and Kubernetes
       uses: imranismail/setup-kustomize@v1
 
     - name: Deploy to Kubernetes
       run: |
-        aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name <EKS_CLUSTER_NAME>
+        aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name picture-cluster
         cd starter/backend/k8s
         kustomize edit set image backend=356698323071.dkr.ecr.us-east-1.amazonaws.com/movie-picture-frontend:${{ github.sha }}
         kustomize build | kubectl apply -f -

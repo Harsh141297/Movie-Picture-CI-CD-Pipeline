@@ -59,5 +59,7 @@ jobs:
 
     - name: Deploy to Kubernetes
       run: |
-        aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name your-eks-cluster-name
+        aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name picture-cluster
+        cd starter/frontend/k8s
+        kustomize edit set image frontend=356698323071.dkr.ecr.us-east-1.amazonaws.com/movie-picture-frontend:${{ github.sha }}
         kustomize build | kubectl apply -f -
