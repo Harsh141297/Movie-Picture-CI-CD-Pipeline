@@ -45,6 +45,6 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.32.2",
     "jest": "^27.5.1",
-    "prettier": "^2.5.1" // Example version, make sure this line is present
+    "prettier": "^2.5.1"
   }
 }
