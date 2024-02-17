@@ -1,0 +1,39 @@
+name: Frontend Continuous Integration
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'frontend/**'
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - run: cd frontend && npm install && npm run lint
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - run: cd frontend && nvm use && npm ci && npm test
+
+  build:
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - run: cd frontend && npm install && npm run build
+

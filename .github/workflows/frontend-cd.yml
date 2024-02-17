@@ -1,0 +1,56 @@
+name: Frontend CD
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+    - 'frontend/**'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install dependencies and build frontend
+      run: |
+        cd frontend
+        npm install
+        npm run build
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: ./frontend
+        file: ./frontend/Dockerfile
+        push: true
+        tags: 356698323071.dkr.ecr.us-east-1.amazonaws.com/movie-picture-frontend:${{ github.sha }}
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Setup Kustomize and Kubernetes
+      uses: imranismail/setup-kustomize@v1
+
+    - name: Update Kubernetes manifests with Kustomize
+      run: |
+        cd starter/frontend/k8s
+        kustomize edit set image frontend=356698323071.dkr.ecr.us-east-1.amazonaws.com/movie-picture-frontend:${{ github.sha }}
+
+    - name: Deploy to Kubernetes
+      run: |
+        aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name your-eks-cluster-name
+        kustomize build | kubectl apply -f -
